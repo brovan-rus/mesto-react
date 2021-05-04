@@ -21,6 +21,12 @@ function App() {
     setIsAddPlacePopupOpen(true);
   };
 
+  const closeAllPopups = () => {
+    setIsEditProfileOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+  }
+
   return (
     <>
       <div className="page page_position_center">
@@ -30,7 +36,7 @@ function App() {
         <Footer/>
       </div>
 
-      <PopupWithForm title="Редактировать профиль" content="profile-edit"  isOpen={isEditProfilePopupOpen}>
+      <PopupWithForm title="Редактировать профиль" content="profile-edit"  isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
         <input className="form__input form__input_info_name" autoComplete="off" id="profile-name-input" required
                minLength="2" maxLength="40" type="text" name="userName" placeholder="Имя"/>
         <span className="form__input-error profile-name-input-error"></span>
@@ -40,7 +46,7 @@ function App() {
         <button className="form__submit-button" type="submit">Сохранить</button>
       </PopupWithForm>
 
-      <PopupWithForm title="Новое место" content="card-add" isOpen={isAddPlacePopupOpen}>
+      <PopupWithForm title="Новое место" content="card-add" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
         <input className="form__input form__input_info_name" id="card-title-input" required autoComplete="off"
                minLength="2" maxLength="30" type="text" name="name" placeholder="Название"/>
         <span className="form__input-error card-title-input-error"></span>
@@ -50,13 +56,13 @@ function App() {
         <button className="form__submit-button" type="submit">Создать</button>
       </PopupWithForm>
 
-      <PopupWithForm title="Обновить аваар" content="delete-card" isOpen={isEditAvatarPopupOpen}>
+      <PopupWithForm title="Обновить аваар" content="delete-card" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
         <input className="form__input form__input_info_value" autoComplete="off" required id="avatar-link-input" type="url" name="link" placeholder="Ссылка на аватар"/>
         <span className="form__input-error form__input-error_content_avatar-renew avatar-link-input-error"></span>
         <button className="form__submit-button" type="submit">Сохранить</button>
       </PopupWithForm>
 
-      <PopupWithForm title="Вы уверены?" content="delete-card">
+      <PopupWithForm title="Вы уверены?" content="delete-card" onClose={closeAllPopups}>
         <button className="popup__approve-button" type="button">Да</button>
       </PopupWithForm>
 
