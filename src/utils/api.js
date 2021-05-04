@@ -1,3 +1,5 @@
+import {apiUrl, cohort, token} from "./constants";
+
 function handleResponse(res) {
   if (!res.ok) {
     return Promise.reject(`Ошибка ${res}`);
@@ -6,7 +8,7 @@ function handleResponse(res) {
   }
 }
 
-export default class Api {
+class Api {
   constructor(url, groupId, token) {
     this._url = url;
     this._token = token;
@@ -105,3 +107,7 @@ export default class Api {
     }).then(handleResponse);
   }
 }
+
+// Создаём экземляр класса для работы с API
+const api = new Api(apiUrl, cohort, token);
+export default api;
