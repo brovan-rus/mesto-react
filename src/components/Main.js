@@ -1,5 +1,6 @@
 import React from "react";
 import api from "../utils/api";
+import Card from "./Card";
 
 function Main({
   handleEditAvatarClick,
@@ -11,6 +12,7 @@ function Main({
     "Исследователь океана"
   );
   const [userAvatar, setUserAvatar] = React.useState("../images/kusto.jpg");
+  const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
     api
@@ -19,6 +21,15 @@ function Main({
         setUserName(answer.name);
         setUserDescription(answer.about);
         setUserAvatar(answer.avatar);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  React.useEffect(() => {
+    api
+      .getInitialCards()
+      .then((answer) => {
+        setCards(answer);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -49,7 +60,11 @@ function Main({
         />
       </section>
       <section className="cards content__cards">
-        <ul className="cards__list"></ul>
+        <ul className="cards__list">
+          {cards.map((card) => (
+            <Card card={card} key={card._id} />
+          ))}
+        </ul>
       </section>
     </main>
   );
