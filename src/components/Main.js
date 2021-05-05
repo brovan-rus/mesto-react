@@ -8,11 +8,9 @@ function Main({
   handleAddPlaceClick,
   handleCardClick,
 }) {
-  const [userName, setUserName] = React.useState("Жак-Ив Кусто");
-  const [userDescription, setUserDescription] = React.useState(
-    "Исследователь океана"
-  );
-  const [userAvatar, setUserAvatar] = React.useState("../images/kusto.jpg");
+  const [userName, setUserName] = React.useState("Загрузка...");
+  const [userDescription, setUserDescription] = React.useState("Загрузка...");
+  const [userAvatar, setUserAvatar] = React.useState("../images/loading.jpg");
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
