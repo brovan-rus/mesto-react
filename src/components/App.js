@@ -7,6 +7,7 @@ import ImagePopup from "./ImagePopup";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import api from "../utils/api";
 import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfileOpen] = React.useState(false);
@@ -21,6 +22,38 @@ function App() {
     userAvatar: "../images/loading.jpg",
     userId: "",
   });
+
+  const [cards, setCards] = React.useState([]);
+
+  React.useEffect(() => {
+    api
+      .getInitialCards()
+      .then((answer) => {
+        setCards(answer);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleCardLike = (card) => {
+    const isLikedByMe = card.likes.some(
+      (like) => like._id === currentUser.userId
+    );
+    api
+      .changeLikeCardStatus(card._id, isLikedByMe)
+      .then((newCard) =>
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        )
+      )
+      .catch((err) => console.log(err));
+  };
+
+  const handleCardDelete = (card) => {
+    api.removeCard(card._id).then((answer) => {
+      console.log(answer);
+      setCards((state) => state.filter((c) => c._id === !answer._id));
+    });
+  };
 
   React.useEffect(() => {
     api
@@ -66,11 +99,27 @@ function App() {
         setCurrentUser({
           userName: name,
           userDescription: about,
-          userAvatar: avatar,
           userId: _id,
+          avatar: avatar,
         });
       })
       .catch((err) => console.log(err));
+    closeAllPopups();
+  }
+
+  function handleUpdateAvatar(avatarRef) {
+    api
+      .avatarChange(avatarRef.current.value)
+      .then(({ name, about, _id, avatar }) =>
+        setCurrentUser({
+          userName: name,
+          userDescription: about,
+          userAvatar: avatar,
+          userId: _id,
+        })
+      )
+      .catch((err) => console.log(err));
+    avatarRef.current.value = "";
     closeAllPopups();
   }
 
@@ -83,6 +132,9 @@ function App() {
           handleEditAvatarClick={handleEditAvatarClick}
           handleProfileEditClick={handleProfileEditClick}
           handleCardClick={handleCardClick}
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
         />
         <Footer />
       </div>
@@ -91,6 +143,12 @@ function App() {
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
         onUpdateUser={handleUpdateUser}
+      />
+
+      <EditAvatarPopup
+        isOpen={isEditAvatarPopupOpen}
+        onClose={closeAllPopups}
+        onUpdateAvatar={handleUpdateAvatar}
       />
 
       <PopupWithForm
@@ -123,24 +181,7 @@ function App() {
         />
         <span className="form__input-error card-link-input-error"></span>
       </PopupWithForm>
-      <PopupWithForm
-        title="Обновить аватар"
-        submitButtonText="Сохранить"
-        content="delete-card"
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
-      >
-        <input
-          className="form__input form__input_info_value"
-          autoComplete="off"
-          required
-          id="avatar-link-input"
-          type="url"
-          name="link"
-          placeholder="Ссылка на аватар"
-        />
-        <span className="form__input-error form__input-error_content_avatar-renew avatar-link-input-error"></span>
-      </PopupWithForm>
+
       <PopupWithForm
         title="Вы уверены?"
         submitButtonText="Да"
