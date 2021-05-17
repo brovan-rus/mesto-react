@@ -4,6 +4,8 @@ import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import React from "react";
 import ImagePopup from "./ImagePopup";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import api from "../utils/api";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfileOpen] = React.useState(false);
@@ -12,6 +14,26 @@ function App() {
     false
   );
   const [selectedCard, setSelectedCard] = React.useState({ isOpened: false });
+  const [currentUser, setCurrentUser] = React.useState({
+    userName: "Загрузка...",
+    userDescription: "Загрузка...",
+    userAvatar: "../images/loading.jpg",
+    userId: "",
+  });
+
+  React.useEffect(() => {
+    api
+      .getCurrentUser()
+      .then(({ name, about, avatar, _id }) => {
+        setCurrentUser({
+          userName: name,
+          userDescription: about,
+          userAvatar: avatar,
+          userId: _id,
+        });
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -37,7 +59,7 @@ function App() {
   }
 
   return (
-    <>
+    <CurrentUserContext.Provider value={currentUser}>
       <div className="page page_position_center">
         <Header />
         <Main
@@ -48,7 +70,6 @@ function App() {
         />
         <Footer />
       </div>
-
       <PopupWithForm
         title="Редактировать профиль"
         submitButtonText="Сохранить"
@@ -81,7 +102,6 @@ function App() {
         />
         <span className="form__input-error profile-job-input-error"></span>
       </PopupWithForm>
-
       <PopupWithForm
         title="Новое место"
         submitButtonText="Создать"
@@ -112,7 +132,6 @@ function App() {
         />
         <span className="form__input-error card-link-input-error"></span>
       </PopupWithForm>
-
       <PopupWithForm
         title="Обновить аватар"
         submitButtonText="Сохранить"
@@ -131,16 +150,14 @@ function App() {
         />
         <span className="form__input-error form__input-error_content_avatar-renew avatar-link-input-error"></span>
       </PopupWithForm>
-
       <PopupWithForm
         title="Вы уверены?"
         submitButtonText="Да"
         content="delete-card"
         onClose={closeAllPopups}
       />
-
       <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-    </>
+    </CurrentUserContext.Provider>
   );
 }
 

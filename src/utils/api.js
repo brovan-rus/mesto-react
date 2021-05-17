@@ -1,4 +1,4 @@
-import {apiUrl, cohort, token} from "./constants";
+import { apiUrl, cohort, token } from "./constants";
 
 function handleResponse(res) {
   if (!res.ok) {
