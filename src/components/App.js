@@ -9,11 +9,15 @@ import api from "../utils/api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import CardDelApprovePopup from "./CardDelApprovePopup";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfileOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(
+    false
+  );
+  const [isCardDelApprovePopupOpen, setIsCardDelApprovePopup] = React.useState(
     false
   );
   const [selectedCard, setSelectedCard] = React.useState({ isOpened: false });
@@ -23,6 +27,7 @@ function App() {
     userAvatar: "../images/loading.jpg",
     userId: "",
   });
+  const [deletingCard, setDeletingCard] = React.useState({});
 
   const [cards, setCards] = React.useState([]);
 
@@ -51,9 +56,15 @@ function App() {
 
   const handleCardDelete = (card) => {
     api.removeCard(card._id).then((answer) => {
-      console.log(card._id);
       setCards((state) => state.filter((c) => c._id !== card._id));
     });
+    setDeletingCard({});
+    closeAllPopups();
+  };
+
+  const handleCardDelApprove = (card) => {
+    setIsCardDelApprovePopup(true);
+    setDeletingCard(card);
   };
 
   React.useEffect(() => {
@@ -86,6 +97,7 @@ function App() {
     setIsEditProfileOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setIsCardDelApprovePopup(false);
     setSelectedCard({ isOpened: false });
   }
 
@@ -143,7 +155,7 @@ function App() {
           handleCardClick={handleCardClick}
           cards={cards}
           onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
+          onCardDelete={handleCardDelApprove}
         />
         <Footer />
       </div>
@@ -166,12 +178,13 @@ function App() {
         onCardAdd={handleCardAdd}
       />
 
-      <PopupWithForm
-        title="Вы уверены?"
-        submitButtonText="Да"
-        content="delete-card"
+      <CardDelApprovePopup
+        isOpen={isCardDelApprovePopupOpen}
         onClose={closeAllPopups}
+        card={deletingCard}
+        onCardDel={handleCardDelete}
       />
+
       <ImagePopup card={selectedCard} onClose={closeAllPopups} />
     </CurrentUserContext.Provider>
   );
