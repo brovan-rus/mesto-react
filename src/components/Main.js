@@ -21,8 +21,17 @@ function Main({
       .catch((err) => console.log(err));
   }, []);
 
-  const handleCardLike = () => {
-    const isLikedByMe = card.likes.some((like) => like._id === currentUser.id);
+  const handleCardLike = (card) => {
+    const isLikedByMe = card.likes.some(
+      (like) => like._id === currentUser.userId
+    );
+    api
+      .changeLikeCardStatus(card._id, isLikedByMe)
+      .then((newCard) =>
+        setCards((state) =>
+          state.map((c) => (c._id === card._id ? newCard : c))
+        )
+      );
   };
 
   return (
@@ -53,7 +62,12 @@ function Main({
       <section className="cards content__cards">
         <ul className="cards__list">
           {cards.map((card) => (
-            <Card card={card} key={card._id} onCardClick={handleCardClick} />
+            <Card
+              card={card}
+              key={card._id}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+            />
           ))}
         </ul>
       </section>

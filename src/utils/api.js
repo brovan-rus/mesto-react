@@ -58,6 +58,11 @@ class Api {
     }).then(handleResponse);
   }
 
+  changeLikeCardStatus(cardID, isLikedByMe) {
+    if (!isLikedByMe) return this.setCardLike(cardID);
+    else return this.removeCardLike(cardID);
+  }
+
   setCardLike(cardID) {
     return fetch(
       `${this._url}/v1/cohort-${this._groupId}/cards/likes/${cardID}`,
