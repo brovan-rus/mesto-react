@@ -39,7 +39,7 @@ class Api {
       },
       body: JSON.stringify({
         name: userData.userName,
-        about: userData.userJob,
+        about: userData.userDescription,
       }),
     }).then(handleResponse);
   }

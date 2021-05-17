@@ -31,7 +31,15 @@ function Main({
         setCards((state) =>
           state.map((c) => (c._id === card._id ? newCard : c))
         )
-      );
+      )
+      .catch((err) => console.log(err));
+  };
+
+  const handleCardDelete = (card) => {
+    api.removeCard(card._id).then((answer) => {
+      console.log(answer);
+      setCards((state) => state.filter((c) => c._id === !answer._id));
+    });
   };
 
   return (
@@ -67,6 +75,7 @@ function Main({
               key={card._id}
               onCardClick={handleCardClick}
               onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
             />
           ))}
         </ul>

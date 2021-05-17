@@ -6,6 +6,7 @@ import React from "react";
 import ImagePopup from "./ImagePopup";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import api from "../utils/api";
+import EditProfilePopup from "./EditProfilePopup";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfileOpen] = React.useState(false);
@@ -58,6 +59,21 @@ function App() {
     setSelectedCard({ ...card, isOpened: true });
   }
 
+  function handleUpdateUser(name, description) {
+    api
+      .setCurrentUser({ userName: name, userDescription: description })
+      .then(({ name, about, avatar, _id }) => {
+        setCurrentUser({
+          userName: name,
+          userDescription: about,
+          userAvatar: avatar,
+          userId: _id,
+        });
+      })
+      .catch((err) => console.log(err));
+    closeAllPopups();
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page page_position_center">
@@ -70,38 +86,13 @@ function App() {
         />
         <Footer />
       </div>
-      <PopupWithForm
-        title="Редактировать профиль"
-        submitButtonText="Сохранить"
-        content="profile-edit"
+
+      <EditProfilePopup
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
-      >
-        <input
-          className="form__input form__input_info_name"
-          autoComplete="off"
-          id="profile-name-input"
-          required
-          minLength="2"
-          maxLength="40"
-          type="text"
-          name="userName"
-          placeholder="Имя"
-        />
-        <span className="form__input-error profile-name-input-error"></span>
-        <input
-          className="form__input form__input_info_value"
-          autoComplete="off"
-          id="profile-job-input"
-          required
-          minLength="2"
-          maxLength="200"
-          type="text"
-          name="userJob"
-          placeholder="О себе"
-        />
-        <span className="form__input-error profile-job-input-error"></span>
-      </PopupWithForm>
+        onUpdateUser={handleUpdateUser}
+      />
+
       <PopupWithForm
         title="Новое место"
         submitButtonText="Создать"
