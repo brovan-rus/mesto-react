@@ -44,7 +44,7 @@ class Api {
     }).then(handleResponse);
   }
 
-  addNewCard(cardData) {
+  addNewCard({ name, link }) {
     return fetch(`${this._url}/v1/cohort-${this._groupId}/cards`, {
       method: "POST",
       headers: {
@@ -52,8 +52,8 @@ class Api {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: cardData.name,
-        link: cardData.link,
+        name: name,
+        link: link,
       }),
     }).then(handleResponse);
   }

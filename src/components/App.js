@@ -8,6 +8,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import api from "../utils/api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfileOpen] = React.useState(false);
@@ -50,8 +51,8 @@ function App() {
 
   const handleCardDelete = (card) => {
     api.removeCard(card._id).then((answer) => {
-      console.log(answer);
-      setCards((state) => state.filter((c) => c._id === !answer._id));
+      console.log(card._id);
+      setCards((state) => state.filter((c) => c._id !== card._id));
     });
   };
 
@@ -123,6 +124,14 @@ function App() {
     closeAllPopups();
   }
 
+  function handleCardAdd(name, link) {
+    api
+      .addNewCard({ name, link })
+      .then((newCard) => setCards([newCard, ...cards]))
+      .catch((err) => console.log(err));
+    closeAllPopups();
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page page_position_center">
@@ -151,36 +160,11 @@ function App() {
         onUpdateAvatar={handleUpdateAvatar}
       />
 
-      <PopupWithForm
-        title="Новое место"
-        submitButtonText="Создать"
-        content="card-add"
+      <AddPlacePopup
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
-      >
-        <input
-          className="form__input form__input_info_name"
-          id="card-title-input"
-          required
-          autoComplete="off"
-          minLength="2"
-          maxLength="30"
-          type="text"
-          name="name"
-          placeholder="Название"
-        />
-        <span className="form__input-error card-title-input-error"></span>
-        <input
-          className="form__input form__input_info_value"
-          autoComplete="off"
-          required
-          id="card-link-input"
-          type="url"
-          name="link"
-          placeholder="Ссылка на картинку"
-        />
-        <span className="form__input-error card-link-input-error"></span>
-      </PopupWithForm>
+        onCardAdd={handleCardAdd}
+      />
 
       <PopupWithForm
         title="Вы уверены?"
