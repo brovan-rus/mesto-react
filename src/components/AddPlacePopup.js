@@ -13,9 +13,12 @@ function AddPlacePopup({ isOpen, onClose, onCardAdd }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onCardAdd(title, url);
+  };
+
+  React.useEffect(() => {
     setUrl("");
     setTitle("");
-  };
+  }, [isOpen]);
 
   return (
     <PopupWithForm

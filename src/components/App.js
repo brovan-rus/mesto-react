@@ -55,11 +55,14 @@ function App() {
   };
 
   const handleCardDelete = (card) => {
-    api.removeCard(card._id).then((answer) => {
-      setCards((state) => state.filter((c) => c._id !== card._id));
-    });
-    setDeletingCard({});
-    closeAllPopups();
+    api
+      .removeCard(card._id)
+      .then((answer) => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
+        setDeletingCard({});
+        closeAllPopups();
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleCardDelApprove = (card) => {
@@ -113,35 +116,37 @@ function App() {
           userName: name,
           userDescription: about,
           userId: _id,
-          avatar: avatar,
+          userAvatar: avatar,
         });
+        closeAllPopups();
       })
       .catch((err) => console.log(err));
-    closeAllPopups();
   }
 
   function handleUpdateAvatar(avatarRef) {
     api
       .avatarChange(avatarRef.current.value)
-      .then(({ name, about, _id, avatar }) =>
+      .then(({ name, about, _id, avatar }) => {
         setCurrentUser({
           userName: name,
           userDescription: about,
           userAvatar: avatar,
           userId: _id,
-        })
-      )
+        });
+        avatarRef.current.value = "";
+        closeAllPopups();
+      })
       .catch((err) => console.log(err));
-    avatarRef.current.value = "";
-    closeAllPopups();
   }
 
   function handleCardAdd(name, link) {
     api
       .addNewCard({ name, link })
-      .then((newCard) => setCards([newCard, ...cards]))
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+      })
       .catch((err) => console.log(err));
-    closeAllPopups();
   }
 
   return (
